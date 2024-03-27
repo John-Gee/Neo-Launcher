@@ -1,3 +1,5 @@
+(just a fork to enable adhoc builds)
+
 # Neo Launcher <img title="" src="./fastlane/metadata/android/en-US/images/icon.png" align="left" width="64">
 
 **Free and Open Source Launcher**
