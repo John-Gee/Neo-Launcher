@@ -36,7 +36,7 @@ object PrefKey {
     val PROFILE_ICON_SHAPE = stringPreferencesKey("profile_icon_shape")
     val PROFILE_ICON_COLORED_BG = booleanPreferencesKey("profile_icon_colored_background")
     val PROFILE_ICON_TRANSPARENT_BG = booleanPreferencesKey("profile_transparent_icon")
-    val PROFILE_THEMED_ICONS = booleanPreferencesKey("profile_themed_icons")
+    val PROFILE_THEMED_ICONS = booleanPreferencesKey("themed_icons")
     val PROFILE_ICON_ADAPTIFY = booleanPreferencesKey("profile_icon_adaptify")
     val PROFILE_ICON_RESET_CUSTOM = stringPreferencesKey("profile_icon_reset_custom")
     val PROFILE_ICON_SHAPE_LESS = booleanPreferencesKey("profile_icon_shape_less")
@@ -85,7 +85,6 @@ object PrefKey {
     val DOCK_ROWS = intPreferencesKey("dock_rows")
 
     // Drawer
-    val DRAWER_ICON_SCALE_ENFORCE = booleanPreferencesKey("drawer_icon_scale_enforce")
     val DRAWER_ICON_SCALE = floatPreferencesKey("drawer_icon_scale")
     val DRAWER_LABELS_HIDE = booleanPreferencesKey("drawer_labels_hide")
     val DRAWER_LABELS_MULTILINE = booleanPreferencesKey("drawer_labels_multiline")
@@ -106,6 +105,7 @@ object PrefKey {
     val DRAWER_CATEGORIZATION = stringPreferencesKey("drawer_categorization")
     val DRAWER_CATEGORIZATION_ENABLED = booleanPreferencesKey("drawer_categorization_enabled")
     val DRAWER_CATEGORIZATION_TYPE = stringPreferencesKey("drawer_categorization_type")
+    val DRAWER_LAYOUT = intPreferencesKey("drawer_layout")
 
     // Widgets
     val WIDGETS_SMARTSPACE_ENABLED = booleanPreferencesKey("widgets_smartspace_enable")

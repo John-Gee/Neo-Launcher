@@ -68,6 +68,7 @@ import com.saggitt.omega.util.getFeedProviders
 import com.saggitt.omega.util.languageOptions
 import com.saggitt.omega.widget.Temperature
 import com.saulhdev.neolauncher.icons.CustomAdaptiveIconDrawable
+import com.saulhdev.neolauncher.util.CustomPreferencesMigration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -83,7 +84,12 @@ import kotlin.random.Random
 import com.android.launcher3.graphics.IconShape as L3IconShape
 
 class NeoPrefs private constructor(val context: Context) {
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "neo_launcher")
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+        name = "neo_launcher",
+        produceMigrations = {
+            listOf(CustomPreferencesMigration(context = it).preferencesMigration())
+        }
+    )
     private val dataStore: DataStore<Preferences> = context.dataStore
     val legacyPrefs = LegacyPreferences(context)
 
@@ -162,7 +168,10 @@ class NeoPrefs private constructor(val context: Context) {
         titleId = R.string.title_themed_icons,
         dataStore = dataStore,
         key = PrefKey.PROFILE_THEMED_ICONS,
-        defaultValue = Utilities.ATLEAST_T
+        defaultValue = Utilities.ATLEAST_T,
+        onChange = {
+            legacyPrefs.savePreference(KEY_THEMED_ICONS, it)
+        }
     )
 
     var profileTransparentBgIcons = BooleanPref(
@@ -494,7 +503,6 @@ class NeoPrefs private constructor(val context: Context) {
         defaultValue = false,
     )
 
-
     // Dock
     var dockHide = BooleanPref(
         dataStore = dataStore,
@@ -772,6 +780,14 @@ class NeoPrefs private constructor(val context: Context) {
         titleId = R.string.title_app_categorize,
         summaryId = R.string.summary_app_categorize,
         navRoute = Routes.CATEGORIZE_APPS
+    )
+
+    var drawerLayout = IntSelectionPref(
+        dataStore = dataStore,
+        key = PrefKey.DRAWER_LAYOUT,
+        titleId = R.string.title_drawer_layout,
+        defaultValue = LAYOUT_VERTICAL,
+        entries = drawerLayoutOptions
     )
 
     // Notifications & Widgets/Smartspace
