@@ -118,9 +118,7 @@ class NeoPrefs private constructor(val context: Context) {
         titleId = R.string.title__advanced_language,
         defaultValue = "",
         entries = context.languageOptions(),
-        onChange = {
-            recreate()
-        }
+        onChange = { recreate() }
     )
 
     var profileTheme = IntSelectionPref(
@@ -128,7 +126,7 @@ class NeoPrefs private constructor(val context: Context) {
         key = PrefKey.PROFILE_GLOBAL_THEME,
         titleId = R.string.title__general_theme,
         defaultValue = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) THEME_SYSTEM else THEME_WALLPAPER,
-        entries = themeItems
+        entries = themeItems,
     )
 
     val profileAccentColor = ColorIntPref(
@@ -187,7 +185,7 @@ class NeoPrefs private constructor(val context: Context) {
         dataStore = dataStore,
         key = PrefKey.PROFILE_ICON_SHAPE_LESS,
         defaultValue = false,
-        onChange = { reloadAll }
+        onChange = { reloadAll() }
     )
 
     var profileBlurEnable = BooleanPref(
@@ -196,7 +194,7 @@ class NeoPrefs private constructor(val context: Context) {
         dataStore = dataStore,
         key = PrefKey.PROFILE_BLUR_ENABLED,
         defaultValue = false,
-        onChange = { updateBlur }
+        onChange = { updateBlur() }
     )
 
     var profileBlurRadius = FloatPref(
@@ -242,7 +240,7 @@ class NeoPrefs private constructor(val context: Context) {
         specialOutputs = {
             when {
                 it < 0f -> context.getString(R.string.automatic_short)
-                else    -> "${it.roundToInt()}dp"
+                else -> "${it.roundToInt()}dp"
             }
         }
     )
@@ -378,7 +376,7 @@ class NeoPrefs private constructor(val context: Context) {
             columnsKey = "numColumns",
             rowsKey = "numRows",
             targetObject = LauncherAppState.getIDP(context),
-            onChangeListener = { reloadGrid }
+            onChangeListener = { reloadGrid() }
         )
     }
 
@@ -389,10 +387,10 @@ class NeoPrefs private constructor(val context: Context) {
         titleId = R.string.title__drawer_columns,
         selectDefaultValue = { numColumns },
         defaultValue = 4,
-        onChange = { reloadGrid },
         minValue = 2f,
         maxValue = 16f,
-        steps = 15,
+        steps = 13,
+        onChange = { reloadGrid() },
     )
 
     val desktopGridRows = IdpIntPref(
@@ -401,10 +399,10 @@ class NeoPrefs private constructor(val context: Context) {
         titleId = R.string.title__drawer_rows,
         selectDefaultValue = { numRows },
         defaultValue = 5,
-        onChange = { reloadGrid },
         minValue = 2f,
         maxValue = 16f,
-        steps = 15,
+        steps = 13,
+        onChange = { reloadGrid() },
     )
 
     var desktopFolderCornerRadius = FloatPref(
@@ -418,7 +416,7 @@ class NeoPrefs private constructor(val context: Context) {
         specialOutputs = {
             when {
                 it < 0f -> context.getString(R.string.automatic_short)
-                else    -> "${it.roundToInt()}dp"
+                else -> "${it.roundToInt()}dp"
             }
         },
     )
@@ -570,7 +568,7 @@ class NeoPrefs private constructor(val context: Context) {
             numColumnsPref = dockNumIcons,
             columnsKey = "numHotseatIcons",
             targetObject = LauncherAppState.getIDP(context),
-            onChangeListener = { reloadGrid }
+            onChangeListener = { reloadGrid() }
         )
     }
 
@@ -584,7 +582,7 @@ class NeoPrefs private constructor(val context: Context) {
         defaultValue = 4,
         minValue = 2f,
         maxValue = 16f,
-        steps = 15
+        steps = 13,
     )
     val dockNumRows = IntPref(
         dataStore = dataStore,
@@ -613,7 +611,7 @@ class NeoPrefs private constructor(val context: Context) {
         dataStore = dataStore,
         defaultValue = setOf(),
         navRoute = Routes.HIDDEN_APPS,
-        onChange = { reloadGrid }
+        onChange = { reloadGrid() }
     )
 
     var drawerProtectedAppsSet = StringSetPref(
@@ -622,7 +620,7 @@ class NeoPrefs private constructor(val context: Context) {
         dataStore = dataStore,
         defaultValue = setOf(),
         navRoute = Routes.PROTECTED_APPS,
-        onChange = { reloadGrid }
+        onChange = { reloadGrid() }
     )
 
     private val drawerGridSizeDelegate = ResettableLazy {
@@ -631,7 +629,7 @@ class NeoPrefs private constructor(val context: Context) {
             numColumnsPref = drawerGridColumns,
             columnsKey = "numAllAppsColumns",
             targetObject = LauncherAppState.getIDP(context),
-            onChangeListener = { reloadGrid }
+            onChangeListener = { reloadGrid() }
         )
     }
     val drawerGridSize by drawerGridSizeDelegate
@@ -643,8 +641,8 @@ class NeoPrefs private constructor(val context: Context) {
         selectDefaultValue = { numAllAppsColumns },
         minValue = 2f,
         maxValue = 16f,
-        steps = 15,
-        onChange = { reloadGrid }
+        steps = 13,
+        onChange = { reloadGrid() }
     )
 
     var drawerPopup = StringMultiSelectionPref(
@@ -716,7 +714,7 @@ class NeoPrefs private constructor(val context: Context) {
         minValue = 0.5f,
         steps = 150,
         specialOutputs = { "${(it * 100).roundToInt()}%" },
-        onChange = { reloadGrid }
+        onChange = { reloadGrid() }
     )
 
     val drawerSeparateWorkApps = BooleanPref(
@@ -861,10 +859,9 @@ class NeoPrefs private constructor(val context: Context) {
         titleId = R.string.notification_custom_color,
         dataStore = dataStore,
         key = PrefKey.NOTIFICATION_DOTS_CUSTOM,
-        defaultValue = false
-    ) {
-        pokeChange()
-    }
+        defaultValue = false,
+        onChange = { pokeChange() }
+    )
 
     val notificationBackground = ColorIntPref(
         dataStore = dataStore,
@@ -879,6 +876,14 @@ class NeoPrefs private constructor(val context: Context) {
         key = PrefKey.WIDGETS_SMARTSPACE_ENABLED,
         titleId = R.string.title_smartspace,
         defaultValue = false,
+        onChange = { recreate() }
+    )
+
+    val smartspaceBackground = BooleanPref(
+        dataStore = dataStore,
+        key = PrefKey.WIDGETS_SMARTSPACE_BACKGROUND,
+        titleId = R.string.title_smartspace_background,
+        defaultValue = true,
         onChange = { recreate() }
     )
 
@@ -940,9 +945,8 @@ class NeoPrefs private constructor(val context: Context) {
         titleId = R.string.title_smartspace_widget_provider,
         defaultValue = OWMWeatherProvider::class.java.name,
         entries = Config.smartspaceWeatherProviders(context).filter { it.key != "none" },
-    ) {
-        pokeChange()
-    }
+        onChange = { pokeChange() }
+    )
 
 
     var smartspaceEventProviders = StringMultiSelectionPref(
@@ -1000,7 +1004,7 @@ class NeoPrefs private constructor(val context: Context) {
         specialOutputs = {
             when {
                 it < 0f -> context.getString(R.string.automatic_short)
-                else    -> "${it.roundToInt()}dp"
+                else -> "${it.roundToInt()}dp"
             }
         }
     )
@@ -1064,10 +1068,9 @@ class NeoPrefs private constructor(val context: Context) {
         key = PrefKey.FEED_PROVIDER,
         titleId = R.string.title_feed_provider,
         defaultValue = "",
-        entries = context.getFeedProviders()
-    ) {
-        restart()
-    }
+        entries = context.getFeedProviders(),
+        onChange = { restart() }
+    )
 
     // GESTURES & Dash
     var gestureDoubleTap = GesturePref(
@@ -1171,7 +1174,7 @@ class NeoPrefs private constructor(val context: Context) {
 
     //Misc
     val customAppName =
-        object : MutableMapPref<ComponentKey, String>(context, "app_name_map", { reloadAll }) {
+        object : MutableMapPref<ComponentKey, String>(context, "app_name_map", { reloadAll() }) {
             override fun flattenKey(key: ComponentKey) = key.toString()
             override fun unflattenKey(key: String) = makeComponentKey(context, key)
             override fun flattenValue(value: String) = value
