@@ -19,8 +19,9 @@
 package com.saggitt.omega.compose.pages
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,6 +31,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -79,21 +81,23 @@ import com.saggitt.omega.groups.ui.GroupItem
 import com.saggitt.omega.groups.ui.SelectTabBottomSheet
 import com.saggitt.omega.preferences.NeoPrefs
 import com.saggitt.omega.preferences.StringSelectionPref
+import com.saggitt.omega.theme.GroupItemShape
 import com.saggitt.omega.util.Config
 import kotlinx.coroutines.launch
-import org.burnoutcrew.reorderable.ReorderableItem
-import org.burnoutcrew.reorderable.detectReorderAfterLongPress
-import org.burnoutcrew.reorderable.rememberReorderableLazyListState
-import org.burnoutcrew.reorderable.reorderable
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterialApi::class)
+@OptIn(
+    ExperimentalMaterialApi::class, ExperimentalMaterialApi::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 fun AppCategoriesPage() {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val prefs = NeoPrefs.getInstance(context)
     val manager by lazy { prefs.drawerAppGroupsManager }
-    val categoriesEnabled by manager.categorizationEnabled.collectAsState()
+    val categoriesEnabled by manager.categorizationEnabled.collectAsState(false)
 
     var categoryTitle by remember { mutableStateOf("") }
 
@@ -157,9 +161,10 @@ fun AppCategoriesPage() {
         }
     }
 
-    val groupsListState = rememberReorderableLazyListState(onMove = { from, to ->
+    val lazyListState = rememberLazyListState()
+    val reorderableListState = rememberReorderableLazyListState(lazyListState) { from, to ->
         groups.move(from.index, to.index)
-    })
+    }
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
@@ -279,52 +284,43 @@ fun AppCategoriesPage() {
                     )
                     LazyColumn(
                         modifier = Modifier
-                            .fillMaxHeight()
-                            .reorderable(groupsListState)
-                            .detectReorderAfterLongPress(groupsListState),
+                            .fillMaxHeight(),
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         contentPadding = PaddingValues(vertical = 8.dp),
-                        state = groupsListState.listState
+                        state = lazyListState,
                     ) {
-                        itemsIndexed(groups) { index, item ->
+                        itemsIndexed(
+                            groups,
+                            key = { _, item -> item.customizations.toString() }) { index, item ->
                             ReorderableItem(
-                                reorderableState = groupsListState,
-                                key = item.title,
-                                index = index
+                                state = reorderableListState,
+                                key = item.customizations.toString(),
                             ) { isDragging ->
-                                val elevation = animateDpAsState(
-                                    if (isDragging) 24.dp else 0.dp,
-                                    label = ""
+                                val elevation by animateDpAsState(
+                                    if (isDragging) 16.dp else 0.dp,
+                                    label = "elevation",
                                 )
-
-                                if (!isDragging) {
-                                    saveGroupPositions(manager, groups)
-                                }
+                                val bgColor by animateColorAsState(
+                                    if (isDragging) MaterialTheme.colorScheme.surfaceContainerHighest
+                                    else MaterialTheme.colorScheme.surfaceContainer,
+                                    label = "bgColor",
+                                )
 
                                 GroupItem(
                                     title = item.title,
                                     summary = item.summary,
                                     modifier = Modifier
-                                        .shadow(elevation.value)
-                                        .clip(
-                                            RoundedCornerShape(
-                                                topStart = if (index == 0) 24.dp else 8.dp,
-                                                topEnd = if (index == 0) 24.dp else 8.dp,
-                                                bottomStart = if (index == groups.size - 1) 24.dp else 8.dp,
-                                                bottomEnd = if (index == groups.size - 1) 24.dp else 8.dp
-                                            )
-                                        )
-                                        .background(
-                                            if (isDragging) MaterialTheme.colorScheme.primary
-                                            else MaterialTheme.colorScheme.surface
-                                        ),
+                                        .longPressDraggableHandle {
+                                            saveGroupPositions(manager, groups)
+                                        }
+                                        .shadow(elevation)
+                                        .clip(GroupItemShape(index, groups.size - 1)),
+                                    containerColor = bgColor,
                                     removable = item.type in arrayOf(
                                         DrawerTabs.TYPE_CUSTOM,
                                         FlowerpotTabs.TYPE_FLOWERPOT,
                                         DrawerFolders.TYPE_CUSTOM
                                     ),
-                                    index = index,
-                                    groupSize = groups.size,
                                     onClick = {
                                         coroutineScope.launch {
                                             sheetChanger = Config.BS_EDIT_GROUP
@@ -363,7 +359,12 @@ fun AppCategoriesPage() {
                     }
                 }
             }
+        }
 
+        DisposableEffect(key1 = null) {
+            onDispose {
+                prefs.reloadTabs()
+            }
         }
     }
 }

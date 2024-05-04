@@ -5,39 +5,39 @@ import java.util.TimeZone
 
 buildscript {
     dependencies {
-        classpath("com.android.tools.build:gradle:8.3.2")
+        classpath("com.android.tools.build:gradle:8.4.0")
     }
 }
 
 val vAccompanist = "0.34.0"
-val vActivity = "1.8.2"
+val vActivity = "1.9.0"
 val vAlwan = "1.0.1"
 val vCoil = "2.6.0"
-val vComposeBOM = "2024.04.00"
-val vComposeCompiler = "1.5.11"
+val vComposeBOM = "2024.05.00"
+val vComposeCompiler = "1.5.13"
 val vConstraintLayout = "2.1.4"
 val vCoordinatorLayout = "1.2.0"
-val vCore = "1.12.0"
+val vCore = "1.13.1"
 val vCoroutines = "1.8.0"
 val vDynamicanimation = "1.1.0-alpha03"
-val vDSP = "1.0.0"
+val vDSP = "1.1.1"
 val vFuzzywuzzy = "1.4.0"
 val vHokoBlur = "1.5.2"
 val vJUnit = "4.13.2"
 val vJUnit5 = "5.9.2"
 val vKotlin = "1.9.23"
-val vKSP = "1.0.19"
+val vKSP = "1.0.20"
 val vLifecycle = "2.7.0"
 val vLifecycleExt = "2.2.0"
-val vMaterial = "1.11.0"
+val vMaterial = "1.12.0"
 val vNavigation = "2.7.7"
-val vOkhttp = "5.0.0-alpha.12"
+val vOkhttp = "5.0.0-alpha.14"
 val vOWM = "2.1.0"
 val vPersianDate = "1.7.1"
 val vPalette = "1.0.0"
 val vPrefs = "1.2.1"
-val vProtobuf = "3.24.4"
-val vReorderable = "0.9.6"
+val vProtobuf = "3.25.3"
+val vReorderable = "2.0.0"
 val vRoom = "2.6.1"
 val vRV = "1.3.2"
 val vResBypass = "2.2"
@@ -45,11 +45,11 @@ val vSerialization = "1.6.3"
 val vSlice = "1.1.0-alpha02"
 
 plugins {
-    id("com.android.application").version("8.3.2")
+    id("com.android.application").version("8.4.0")
     kotlin("android").version("1.9.23")
     kotlin("plugin.parcelize").version("1.9.23")
     kotlin("plugin.serialization").version("1.9.23")
-    id("com.google.devtools.ksp").version("1.9.23-1.0.19")
+    id("com.google.devtools.ksp").version("1.9.23-1.0.20")
     id("com.google.protobuf").version("0.9.4")
 }
 
@@ -66,8 +66,8 @@ android {
     namespace = "com.android.launcher3"
     compileSdk = 34
 
-    val name = "1.0"
-    val code = 956
+    val name = "1.0.0-alpha01"
+    val code = 1000
 
     defaultConfig {
         minSdk = 26
@@ -300,7 +300,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-drawablepainter:$vAccompanist")
     implementation("androidx.navigation:navigation-compose:$vNavigation")
     implementation("io.coil-kt:coil-compose:$vCoil")
-    implementation("org.burnoutcrew.composereorderable:reorderable:$vReorderable")
+    implementation("sh.calvin.reorderable:reorderable:$vReorderable")
 
     //Room
     implementation("androidx.room:room-runtime:$vRoom")

@@ -163,7 +163,7 @@ class NeoPrefs private constructor(val context: Context) {
                 KEY_THEMED_ICONS,
                 it == context.getString(R.string.icon_packs_intent_name)
             )
-            reloadGrid()
+            reloadAll()
         }
     )
 
@@ -791,7 +791,7 @@ class NeoPrefs private constructor(val context: Context) {
         dataStore = dataStore,
         key = PrefKey.DRAWER_LAYOUT,
         titleId = R.string.title_drawer_layout,
-        defaultValue = LAYOUT_VERTICAL,
+        defaultValue = LAYOUT_CUSTOM_CATEGORIES,
         entries = drawerLayoutOptions
     )
 
